@@ -19,7 +19,7 @@ class Set
 		l=0
 		l+=1 for k in pairs @back
 		l
-	__len=len
+	__len: => @len!
 
 	iter: => iter.HashKIter @back
 
@@ -28,13 +28,13 @@ class Set
 		for k in pairs @back
 			s.back[k]=true if o.back[k]
 		s
-	__mul=intersect
+	__mul: (o) => @intersect o
 	union: (o) =>
 		s=Set!
 		s.back[k]=true for k in pairs @back
 		s.back[k]=true for k in pairs o.back
 		s
-	__add=union
+	__add: (o) => @union o
 	difference: (o) =>
 		s=Set!
 		for k in pairs @back
@@ -42,11 +42,11 @@ class Set
 		for k in pairs o.back
 			s.back[k]=true unless @back[k]
 		s
-	__div=difference
+	__div: (o) => @difference o
 	subtract: (o) =>
 		s=Set!
 		for k in pairs @back
 			s.back[k]=true unless o.back[k]
 		s
-	__sub=subtract
+	__sub: (o) => @subtract o
 

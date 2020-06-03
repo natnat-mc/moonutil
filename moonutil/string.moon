@@ -19,7 +19,7 @@ string.contains= (val) =>
 
 string.split= (pat, n=math.huge) =>
 	arr, i={}, 1
-	idx, len=1, #@
+	idx=1
 	for b, e in gmatch @, "()#{pat}()"
 		break if i>n
 		arr[i], i, idx=(sub @, idx, b-1), i+1, e

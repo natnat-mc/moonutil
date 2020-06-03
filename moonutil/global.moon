@@ -22,6 +22,7 @@ functionmeta.__mul=func.and
 functionmeta.__unm=func.not
 
 _G.string=string
+import sub, epat from string
 stringmeta=getmetatable ''
 stringmeta.__index= (i) =>
 	if (type i)=='number'
