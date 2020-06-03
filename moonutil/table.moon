@@ -5,7 +5,7 @@ table=clone table
 table.clone=clone
 
 table.keys= (t) ->
-	[k for k in pairs t
+	[k for k in pairs t]
 
 table.pairs= (t) ->
 	[{k, v} for k, v in pairs t]
