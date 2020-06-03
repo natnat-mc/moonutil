@@ -4,23 +4,20 @@ unpack or=table.unpack
 tconcat=table.concat
 string=clone string
 
-epat= (pat) ->
+string.epat= (pat) ->
 	((gsub pat, "[%%.+*^$-]", (a) -> '%'..a))
-string.epat=epat
+epat=string.epat
 
-grep= (pat, val) =>
+string.grep= (pat, val) =>
 	gsub (epat pat), val
-string.grep=grep
 
-concat= (...) ->
+string.concat= (...) ->
 	tconcat {...}, 1, select '#', ...
-string.concat=concat
 
-contains= (val) =>
+string.contains= (val) =>
 	(match @, epat val)!=nil
-string.contains=contains
 
-split= (pat, n=math.huge) =>
+string.split= (pat, n=math.huge) =>
 	arr, i={}, 1
 	idx, len=1, #@
 	for b, e in gmatch @, "()#{pat}()"
@@ -28,7 +25,6 @@ split= (pat, n=math.huge) =>
 		arr[i], i, idx=(sub @, idx, b-1), i+1, e
 	arr[i]=sub @, idx
 	arr, i+1
-string.split=split
 
 string
 
