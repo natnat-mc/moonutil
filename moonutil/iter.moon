@@ -15,6 +15,9 @@ class Iter
 	new: () =>
 	next: => nil
 
+	tofn: => @\next
+	tolua: => @.next, @
+
 	__tostring: =>
 		@@__name
 

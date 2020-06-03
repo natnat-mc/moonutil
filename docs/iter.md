@@ -19,6 +19,12 @@ Returns the next value from this iterator, or nil if none is available.
 Calling `next` on an iterator that has already returned `nil` is undefined behavior.
 Note that you can use `it\next` as a valid lua iterator, so you can write loops like `for v in it\next` (note the lack of `!`)
 
+### `it\tofn!: Iter<T>, nil -> fn<nil -> T?>`
+Wraps `it\next`, and can be used as a lua iterator or a generator
+
+### `it\tolua!: Iter<T>, nil -> fn<Iter<T> -> T?>, Iter<T>`
+Returns a lua iterator from the current iterator. Just returns the iterator's next method and itself
+
 ### `it\collect!: Iter<T>, nil -> arr<T>`
 Collects all values from this iterator into an array table
 
