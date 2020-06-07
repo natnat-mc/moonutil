@@ -1,21 +1,21 @@
-Set=require 'moonutil.set'
+Set = require 'moonutil.set'
 
 local Iter
-local MapIter, FilterIter, TeeIter, FinalizeIter
-local LimitIter, LoopIter
-local ZipIter, CatIter
-local ValueIter, RangeIter
-local LuaIter, LuaKVIter, FnIter
-local HashKIter, HashKVIter, HashVIter
+local MapIter,    FilterIter,  TeeIter, FinalizeIter
+local LimitIter,  LoopIter
+local ZipIter,    CatIter
+local ValueIter,  RangeIter
+local LuaIter,    LuaKVIter,   FnIter
+local HashKIter,  HashKVIter,  HashVIter
 local ArrayKIter, ArrayKVIter, ArrayVIter
 local TupleIter
 
 -- base iterator class
 class Iter
-	new: () =>
+	new:  () =>
 	next: => nil
 
-	tofn: => @\next
+	tofn:  => @\next
 	tolua: => @.next, @
 
 	__tostring: =>
@@ -23,27 +23,27 @@ class Iter
 
 	-- collect all the values into a table
 	collect: =>
-		a, i={}, 1
+		a, i = {}, 1
 		while true
-			v=@next!
+			v = @next!
 			if v!=nil
-				a[i], i=v, i+1
+				a[i], i = v, i+1
 			else
 				return a
 
 	-- collect all the kv values into a hash
 	collectkv: =>
-		h={}
+		h = {}
 		while true
-			v=@next!
+			v       = @next!
 			return h unless v
-			h[v[1]]=v[2]
+			h[v[1]] = v[2]
 
 	-- collect values into a set
 	colllectset: =>
-		s=Set!
+		s = Set!
 		while true
-			v=@next!
+			v = @next!
 			if v!=nil
 				s\set v
 			else
@@ -51,25 +51,25 @@ class Iter
 
 	-- count the number of values
 	count: =>
-		n=0
+		n = 0
 		while @next! !=nil
-			n+=1
+			n += 1
 		n
 
 	-- fold the values with a function
 	fold: (fn) =>
-		a=@next!
+		a = @next!
 		while true
-			v=@next!
+			v = @next!
 			if v!=nil
-				a=fn a, v
+				a = fn a, v
 			else
 				return a
 
 	-- exhaust the iterator and give all values to a function
 	foreach: (fn= ->) =>
 		while true
-			v=@next!
+			v = @next!
 			if v!=nil
 				fn v
 			else
@@ -116,9 +116,9 @@ class Iter
 
 -- derived iterator: map
 class MapIter extends Iter
-	new: (@it, @fn) =>
+	new:  (@it, @fn) =>
 	next: =>
-		val=@it\next!
+		val = @it\next!
 		if val!=nil
 			@.fn val
 		else
@@ -126,9 +126,9 @@ class MapIter extends Iter
 
 -- derived iterator: filter
 class FilterIter extends Iter
-	new: (@it, @fn) =>
+	new:  (@it, @fn) =>
 	next: =>
-		v=@it\next!
+		v = @it\next!
 		return nil if v==nil
 		if @.fn v
 			v
@@ -137,26 +137,26 @@ class FilterIter extends Iter
 
 -- derived iterator: tee
 class TeeIter extends Iter
-	new: (@it, @fn) =>
+	new:  (@it, @fn) =>
 	next: =>
-		v=@it\next!
+		v = @it\next!
 		return nil if v==nil
 		@.fn v
 		v
 
 -- derived iterator: finalize
 class FinalizeIter extends Iter
-	new: (@it, @fn) =>
+	new:  (@it, @fn) =>
 	next: =>
-		v=@it\next!
+		v = @it\next!
 		@.fn! if v==nil
 		v
 
 -- derived iterator: limit
 class LimitIter extends Iter
-	new: (@it, @n=1) =>
+	new:  (@it, @n=1) =>
 	next: =>
-		@n-=1
+		@n -= 1
 		if @n>=0
 			@it\next!
 		else
@@ -164,40 +164,40 @@ class LimitIter extends Iter
 
 -- derived iterator: loop
 class LoopIter extends Iter
-	new: (@it, @n=math.huge) =>
-		@a={}
-		@i=1
-		@l=1
+	new:  (@it, @n=math.huge) =>
+		@a = {}
+		@i = 1
+		@l = 1
 	next: =>
 		if @l>@n
 			nil
 		elseif @l>1
-			v=@a[@i]
+			v = @a[@i]
 			if v!=nil
-				@i+=1
+				@i += 1
 				v
 			else
-				@l+=1
-				@i=1
+				@l += 1
+				@i  = 1
 				@next!
 		else
-			v=@it\next!
+			v = @it\next!
 			if v!=nil
-				@a[@i]=v
-				@i+=1
+				@a[@i]  = v
+				@i     += 1
 				v
 			else
-				@l+=1
-				@i=1
+				@l += 1
+				@i  = 1
 				@next!
 
 -- derived iterator: zip
 class ZipIter extends Iter
-	new: (@a, @b) =>
+	new:  (@a, @b) =>
 	next: =>
-		a=@a\next!
+		a = @a\next!
 		return nil if a==nil
-		b=@b\next!
+		b = @b\next!
 		if b!=nil
 			{a, b}
 		else
@@ -205,74 +205,74 @@ class ZipIter extends Iter
 
 -- derived iterator: cat
 class CatIter extends Iter
-	new: (...) =>
-		@iters={...}
-		@it=table.remove @iters, 1
+	new:  (...) =>
+		@iters = {...}
+		@it    = table.remove @iters, 1
 	next: =>
 		if @it
-			v=@it\next!
+			v = @it\next!
 			if v!=nil
 				v
 			else
-				@it=table.remove @iters, 1
+				@it = table.remove @iters, 1
 				@next!
 		else
 			nil
 
 -- specializes iterator: single value
 class ValueIter extends Iter
-	new: (@val) =>
+	new:  (@val) =>
 	next: =>
-		v=@val
-		@val=nil
+		v    = @val
+		@val = nil
 		v
 
 -- specialized iterator: range
 class RangeIter extends Iter
-	new: (@st=1, @ed=math.huge, @inc=1) =>
+	new:  (@st=1, @ed=math.huge, @inc=1) =>
 		@state=st-@inc
 	next: =>
-		@state+=@inc
+		@state += @inc
 		if @inc>0 and @state>@ed
-			@state=nil
+			@state = nil
 		if @inc<0 and @state<@ed
-			@state=nil
+			@state = nil
 		@state
 
 -- specialized iterator: lua single value
 class LuaIter extends Iter
-	new: (@it, @obj, @st) =>
+	new:  (@it, @obj, @st) =>
 	next: =>
-		@st=@.it @obj, @st
+		@st = @.it @obj, @st
 		@st
 
 -- specialized iterator: lua bi-value
 class LuaKVIter extends Iter
-	new: (@it, @obj, @st) =>
+	new:  (@it, @obj, @st) =>
 	next: =>
-		@st, v=@.it @obj, @st
+		@st, v = @.it @obj, @st
 		{@st, v}
 
 -- specialized iterator: function
 class FnIter extends Iter
-	new: (@fn) =>
+	new:  (@fn) =>
 	next: =>
 		@.fn!
 
 -- specialized iterator: hash keys
 class HashKIter extends Iter
-	new: (@obj) =>
-		@state=nil
+	new:  (@obj) =>
+		@state = nil
 	next: =>
-		@state=next @obj @state
+		@state = next @obj @state
 		@state
 
 -- specialized iterator: hash kv
 class HashKVIter extends Iter
-	new: (@obj) =>
-		@state=nil
+	new:  (@obj) =>
+		@state = nil
 	next: =>
-		@state, val=next @obj, @state
+		@state, val = next @obj, @state
 		if @state
 			{@state, val}
 		else
@@ -280,10 +280,10 @@ class HashKVIter extends Iter
 
 -- specialized iterator: hash values
 class HashVIter extends Iter
-	new: (@obj) =>
-		@state=nil
+	new:  (@obj) =>
+		@state = nil
 	next: =>
-		@state, val=next @obj, @state
+		@state, val = next @obj, @state
 		if @state
 			val
 		else
@@ -296,12 +296,12 @@ class ArrayKIter extends RangeIter
 
 -- specialized iterator: array kv
 class ArrayKVIter extends Iter
-	new: (@obj) =>
-		@k=1
+	new:  (@obj) =>
+		@k = 1
 	next: =>
-		k=@k
-		v=@obj[k]
-		@k+=1
+		k   = @k
+		v   = @obj[k]
+		@k += 1
 		if v!=nil
 			{k, v}
 		else
@@ -309,32 +309,32 @@ class ArrayKVIter extends Iter
 
 -- specialized iterator: array values
 class ArrayVIter extends Iter
-	new: (@obj) =>
-		@k=1
+	new:  (@obj) =>
+		@k = 1
 	next: =>
-		v=@obj[@k]
-		@k+=1
+		v   = @obj[@k]
+		@k += 1
 		v
 
 -- specialized iterator: tuple
 class TupleIter extends Iter
-	new: (@tup) =>
-		@k=1
-		@l=select '#', tup!
-	next: =>
+	new:  (@tup) =>
+		@k  = 1
+		@l  = select '#', tup!
+	next:  =>
 		return nil if @k>@l
-		v=select @k, @.tup!
-		@k+=1
+		v   = select @k, @.tup!
+		@k += 1
 		v
 
 {
 	:Iter
-	:MapIter, :FilterIter, :TeeIter, :FinalizeIter
-	:LimitIter, :LoopIter
-	:ZipIter, :CatIter
-	:ValueIter, :RangeIter
-	:LuaIter, :LuaKVIter, :FnIter
-	:HashKIter, :HashKVIter, :HashVIter
+	:MapIter,    :FilterIter,  :TeeIter, :FinalizeIter
+	:LimitIter,  :LoopIter
+	:ZipIter,    :CatIter
+	:ValueIter,  :RangeIter
+	:LuaIter,    :LuaKVIter,   :FnIter
+	:HashKIter,  :HashKVIter,  :HashVIter
 	:ArrayKIter, :ArrayKVIter, :ArrayVIter
 	:TupleIter
 }
