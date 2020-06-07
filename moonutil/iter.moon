@@ -1,6 +1,8 @@
 Set = require 'moonutil.set'
 
 local Iter
+local collect,    collectkv,   collectset
+local count,      fold,        foreach
 local MapIter,    FilterIter,  TeeIter, FinalizeIter
 local LimitIter,  LoopIter
 local ZipIter,    CatIter
@@ -22,58 +24,22 @@ class Iter
 		@@__name
 
 	-- collect all the values into a table
-	collect: =>
-		a, i = {}, 1
-		while true
-			v = @next!
-			if v!=nil
-				a[i], i = v, i+1
-			else
-				return a
+	collect: => collect @
 
 	-- collect all the kv values into a hash
-	collectkv: =>
-		h = {}
-		while true
-			v       = @next!
-			return h unless v
-			h[v[1]] = v[2]
+	collectkv: => collectkv @
 
 	-- collect values into a set
-	colllectset: =>
-		s = Set!
-		while true
-			v = @next!
-			if v!=nil
-				s\set v
-			else
-				return s
+	colllectset: => collectset @
 
 	-- count the number of values
-	count: =>
-		n = 0
-		while @next! !=nil
-			n += 1
-		n
+	count: => count @
 
 	-- fold the values with a function
-	fold: (fn) =>
-		a = @next!
-		while true
-			v = @next!
-			if v!=nil
-				a = fn a, v
-			else
-				return a
+	fold: (fn) => fold @, fn
 
 	-- exhaust the iterator and give all values to a function
-	foreach: (fn= ->) =>
-		while true
-			v = @next!
-			if v!=nil
-				fn v
-			else
-				return
+	foreach: (fn= ->) => foreach @, fn
 
 	-- map the values through a function
 	map: (fn) =>
@@ -113,6 +79,56 @@ class Iter
 	-- concatenate with anothee iterator
 	cat: (...) =>
 		CatIter @, ...
+
+collect = =>
+	a, i = {}, 1
+	while true
+		v = @next!
+		if v!=nil
+			a[i], i = v, i+1
+		else
+			return a
+
+collectkv = =>
+	a = {}
+	while true
+		v = @next!
+		if v!=nil
+			a[v[1]] = a[v[2]]
+		else
+			return a
+
+collectset = =>
+	s = Set!
+	while true
+		v = @next!
+		if v!=nil
+			s\set v
+		else
+			return s
+
+count = =>
+	n = 0
+	while @next! !=nil
+		n += 1
+	n
+
+fold = (fn) =>
+	a = @next!
+	while true
+		v = @next!
+		if v!=nil
+			a = fn a, v
+		else
+			return a
+
+foreach = (fn) =>
+	while true
+		v = @next!
+		if v!=nil
+			fn v
+		else
+			return
 
 -- derived iterator: map
 class MapIter extends Iter
@@ -328,6 +344,16 @@ class TupleIter extends Iter
 		v
 
 {
+	next: => @next!
+	tofn: => @tofn!
+	tolua: => @tolua!
+	:collect,         :collectkv,         :collectset
+	:count,           :fold,              :foreach
+	map: MapIter,     filter: FilterIter, tee: TeeIter, finalize: FilterIter
+	limit: LimitIter, loop: LoopIter
+	zip: ZipIter,     cat: CatIter
+	value: ValueIter, range: RangeIter
+
 	:Iter
 	:MapIter,    :FilterIter,  :TeeIter, :FinalizeIter
 	:LimitIter,  :LoopIter

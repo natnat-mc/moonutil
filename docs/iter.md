@@ -14,6 +14,8 @@ Iterators are kind of like a pipeline that is driven from the bottom (that is, e
 - let `tuple<...>` be the type of a tuple defined in `moonutil.tuple`
 - let `it` be an `Iter<any>`
 
+All methods on iterators are also available directly in the `iter` module as functions that take an iterator as first argument
+
 ### `it\next!: Iter<T>, nil -> T?`
 Returns the next value from this iterator, or nil if none is available.
 Calling `next` on an iterator that has already returned `nil` is undefined behavior.
