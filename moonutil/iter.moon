@@ -30,7 +30,7 @@ class Iter
 	collectkv: => collectkv @
 
 	-- collect values into a set
-	colllectset: => collectset @
+	collectset: => collectset @
 
 	-- count the number of values
 	count: => count @
@@ -94,7 +94,7 @@ collectkv = =>
 	while true
 		v = @next!
 		if v!=nil
-			a[v[1]] = a[v[2]]
+			a[v[1]] = v[2]
 		else
 			return a
 
@@ -267,6 +267,7 @@ class LuaKVIter extends Iter
 	new:  (@it, @obj, @st) =>
 	next: =>
 		@st, v = @.it @obj, @st
+		return nil if @st==nil
 		{@st, v}
 
 -- specialized iterator: function
@@ -280,7 +281,7 @@ class HashKIter extends Iter
 	new:  (@obj) =>
 		@state = nil
 	next: =>
-		@state = next @obj @state
+		@state = next @obj, @state
 		@state
 
 -- specialized iterator: hash kv
@@ -347,6 +348,10 @@ class TupleIter extends Iter
 	next: => @next!
 	tofn: => @tofn!
 	tolua: => @tolua!
+	skip: (n) =>
+		for i=1, n
+			@next!
+		@
 	:collect,         :collectkv,         :collectset
 	:count,           :fold,              :foreach
 	map: MapIter,     filter: FilterIter, tee: TeeIter, finalize: FilterIter
