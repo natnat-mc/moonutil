@@ -70,6 +70,12 @@ Returns whether or not its first argument is greater than or equal to its second
 ## `func.op.add, func.op.sub, func.op.mul, func.op.div, func.op.mod, func.op.concat: any, any -> any`
 Return the value returned by the corresponding operator (`+`, `-`, `*`, `/`, `%` and `..` respectively)
 
+## `func.op.get: any, any -> any`
+Returns its first argument indexed by its second argument, like `first[second]`
+
+## `func.op.set: any, any, any -> nil`
+Sets the value of its first argument, at the index of its second argument its third argument, like `first[second]=third`
+
 ## `func.op.inspect: A... -> A...`
 The same as the identity function, except it also `print`s all values it gets
 

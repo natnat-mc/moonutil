@@ -48,26 +48,28 @@ func._if  = (c, t, f) -> (...) ->
 		f ...
 
 func.op =
-	identity: (...)  -> ...
-	eq:       (a, b) -> a==b
-	neq:      (a, b) -> a!=b
-	lt:       (a, b) -> a<b
-	le:       (a, b) -> a<=b
-	gt:       (a, b) -> a>b
-	ge:       (a, b) -> a>=b
-	add:      (a, b) -> a+b
-	sub:      (a, b) -> a-b
-	mul:      (a, b) -> a*b
-	div:      (a, b) -> a/b
-	mod:      (a, b) -> a%b
-	pow:      (a, b) -> a^b
-	concat:   (a, b) -> a..b
-	and:      (a, b) -> a and b
-	or:       (a, b) -> a or b
-	unm:      (a)    -> -a
-	len:      (a)    -> #a
-	not:      (a)    -> not a
-	inspect:  (...)  ->
+	identity: (...)     -> ...
+	eq:       (a, b)    -> a==b
+	neq:      (a, b)    -> a!=b
+	lt:       (a, b)    -> a<b
+	le:       (a, b)    -> a<=b
+	gt:       (a, b)    -> a>b
+	ge:       (a, b)    -> a>=b
+	add:      (a, b)    -> a+b
+	sub:      (a, b)    -> a-b
+	mul:      (a, b)    -> a*b
+	div:      (a, b)    -> a/b
+	mod:      (a, b)    -> a%b
+	pow:      (a, b)    -> a^b
+	concat:   (a, b)    -> a..b
+	and:      (a, b)    -> a and b
+	or:       (a, b)    -> a or b
+	unm:      (a)       -> -a
+	len:      (a)       -> #a
+	not:      (a)       -> not a
+	get:      (a, b)    -> a[b]
+	set:      (a, b, c) -> a[b] = c
+	inspect:  (...)     ->
 		print ...
 		...
 setmetatable func.op, allowescape
